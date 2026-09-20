@@ -3,7 +3,7 @@ from tkinter import messagebox
 from modelos.usuarios import validar_login, crear_admin_inicial
 
 def abrir_login():
-    """Muestra la ventana de inicio de sesión.Devuelve los datos del usuario si ingresó bien, o None si cerró la ventana."""
+    
     resultado = {"usuario": None}
 
     ventana = tk.Tk()
@@ -39,13 +39,13 @@ def abrir_login():
         resultado["usuario"] = datos
         ventana.destroy()
 
-        tk.Button(ventana, text="Iniciar sesión", width=20, command=ingresar).pack()
-        ventana.bind("<Return>", ingresar)
+    tk.Button(ventana, text="Iniciar sesión", width=20, command=ingresar).pack()
+    ventana.bind("<Return>", ingresar)
+    entrada_usuario.focus() 
 
-        entrada_usuario.focus()
+    ventana.mainloop()
+    return resultado["usuario"] 
 
-        ventana.mainloop()
-        return resultado ["usuario"]
     
 
 
