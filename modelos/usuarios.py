@@ -7,7 +7,7 @@ def encriptar (contrasena):
 def crear_admin_inicial():
     conexion = obtener_conexion()
     cursor = conexion.cursor()
-    cursor.execute("SELEC COUNT(*) FROM usuarios")
+    cursor.execute("SELECT COUNT(*) FROM usuarios")
     cantidad = cursor.fetchone()[0]
     if cantidad == 0:
         cursor.execute( 

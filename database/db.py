@@ -44,11 +44,11 @@ def iniciar_base_datos():
         CREATE TABLE IF NOT EXISTS usuarios (
             id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
-            nombre_usuario TEXT NOT NULL UNIQUE, 
+            nombre_usuario TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
-            rol TEXT NOT NULL CHECLK (rol IN ('admin', 'vendedor'))
-            telefono TEXT,
-            domicilio TEXT
+            rol TEXT NOT NULL CHECK (rol IN ('administrador', 'vendedor')),
+            domicilio TEXT,
+            telefono TEXT
         )
     """)
 
