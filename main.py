@@ -1,5 +1,6 @@
 from database.db import iniciar_base_datos
 
+
 def main(): 
     iniciar_base_datos() 
 
