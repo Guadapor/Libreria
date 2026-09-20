@@ -1,7 +1,7 @@
 from database.db import iniciar_base_datos
 from modelos.usuarios import crear_admin_inicial
 from vistas.menu_principal import abrir_login
-from vistas.menu_princiapal import abrir_menu
+from vistas.menu_principal import abrir_menu
 
 
 def main(): 

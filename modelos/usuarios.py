@@ -20,7 +20,7 @@ def crear_admin_inicial():
 def validar_login(nombre_usuario, contrasena):
     conexion = obtener_conexion()
     cursor = conexion.cursor()
-    cursor.execute("SELECT id_usuario, nombre, nombre_usuario, rol"
+    cursor.execute("SELECT id_usuario, nombre, nombre_usuario, rol "
                    "FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?",
                    (nombre_usuario, encriptar(contrasena)),
                    )
