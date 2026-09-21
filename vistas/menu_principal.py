@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as ctk 
 from tkinter import messagebox
 
 opciones = [("Libros", ["administrador", "vendedor"]), 
@@ -10,14 +10,14 @@ opciones = [("Libros", ["administrador", "vendedor"]),
             ]
 
 def abrir_menu(usuario):
-    ventana = tk.Tk()
+    ventana = ctk.CTk()
     ventana.title("Librería - Menú principal")
     ventana.geometry("420x420")
 
-    tk.Label(ventana, text= "Menú Principal", font=("Arial", 18, "bold")).pack(pady=20, padx=5)
-    tk.Label(ventana, text = f"{usuario['nombre']} ({usuario['rol']})").pack(pady=0, padx=15)
+    ctk.CTkLabel(ventana, text="Menú Principal", font=("Arial", 18, "bold")).pack(pady=20, padx=5)
+    ctk.CTkLabel(ventana, text=f"{usuario['nombre']} ({usuario['rol']})").pack(pady=0, padx=15)
 
-    marco = tk.Frame(ventana)
+    marco = ctk.CTkFrame(ventana)
     marco.pack()
 
     def abrir_pantalla(nombre):
@@ -26,11 +26,11 @@ def abrir_menu(usuario):
     visible = [nombre for nombre, roles in opciones if usuario["rol"] in roles]
 
     for i, nombre in enumerate(visible):
-        tk.Button(
+        ctk.CTkButton(
             marco, text= nombre, width= 16, height = 3, 
             command = lambda n= nombre: abrir_pantalla(n),
         ).grid(row=i // 2, column= i % 2, padx= 8, pady = 8)
 
-    tk.Button(ventana, text="Salir", width= 16, command= ventana.destroy).pack(pady= 20)
+    ctk.CTkButton(ventana, text="Salir", width= 16, command= ventana.destroy).pack(pady= 20)
 
     ventana.mainloop()
