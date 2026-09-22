@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from vistas.libros import abrir_libros  
+from vistas.ventas import abrir_ventas
+
 opciones = [("Libros", ["administrador", "vendedor"]), 
             ("Ventas", ["administrador", "vendedor"]), 
             ("Stock", ["administrador", "vendedor"]),
@@ -8,6 +11,12 @@ opciones = [("Libros", ["administrador", "vendedor"]),
             ("Ganancias", ["administrador"]),
             ("Usuarios", ["administrador"]),
             ]
+# Pantallas ya implementadas. Las que todavia no estás hechas siguen mostrando el mensaje de aviso, como antes.
+pantallas = {
+    "Libros": abrir_libros,
+    "Ventas": abrir_ventas,
+}
+
 
 def abrir_menu(usuario):
     ventana = tk.Tk()
@@ -21,7 +30,11 @@ def abrir_menu(usuario):
     marco.pack()
 
     def abrir_pantalla(nombre):
-        messagebox.showinfo(nombre, f"La pantalla de {nombre} todavía no esta hecha.")
+        funcion = pantallas.get(nombre)
+        if funcion is None:
+            messagebox.showinfo(nombre, f"La pantalla de {nombre} todavía no esta hecha.")
+            return
+        funcion(usuario)
 
     visible = [nombre for nombre, roles in opciones if usuario["rol"] in roles]
 

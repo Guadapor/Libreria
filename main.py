@@ -1,3 +1,4 @@
+
 from database.db import iniciar_base_datos
 from modelos.usuarios import crear_admin_inicial
 from vistas.login import abrir_login
