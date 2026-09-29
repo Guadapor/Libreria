@@ -12,8 +12,27 @@ Este sistema es útil porque:
 - Ofrece al administrador una visión clara del estado del negocio, el inventario y las finanzas.
 
 # Cómo pueden comenzar los usuarios con el proyecto
-Instrucciones básicas para correr o probar la aplicación
+Guía de Ejecución y Uso del Sistema
 
+Ejecución de la Aplicación
+-------------------------------
+Para poner en marcha el sistema desde Visual Studio Code, seguí estos pasos:
+
+1.Abrir el proyecto en Visual Studio Code.
+2.Posicionarse en el archivo principal main.py.
+3.Hacer clic en el botón de ejecución (Play) ubicado en la esquina superior derecha de la pantalla.
+4.Una vez iniciado el sistema, ingresar con las credenciales de administrador.
+
+Panel Principal (Menú)
+--------------------------------
+Desde el menú principal, los administradores y usuarios autorizados podrán acceder a las siguientes secciones:
+
+* Libros: Permite dar de alta nuevos ejemplares indicando el nombre del autor, la categoría, el precio y la cantidad inicial disponible.
+* Ventas: Historial completo con el registro de todas las ventas realizadas en el sistema.
+* Movimientos: Apartado para supervisar de forma clara los ingresos y egresos de dinero.
+* Stock: Control de inventario en tiempo real. Permite visualizar la cantidad disponible de cada libro, identificar alertas de reposición o detectar productos agotados.
+* Ganancias: Reporte financiero detallado con el total de las ganancias obtenidas.
+* Usuarios: Gestión y visualización de todos los usuarios que poseen acceso a la plataforma
 
 # Quien mantiene y contribuye con el proyecto
 Este proyecto esta desarrollado y mantenido por el grupo "Commit y Pide un Deseo" de la Tecnicatura Superior en Desarrollo de Software (ISPC)
