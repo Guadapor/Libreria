@@ -1,15 +1,13 @@
+import customtkinter as ctk
+from tkinter import ttk, messagebox
 from datetime import datetime
 from database.db import obtener_conexion
+
 class StockInsuficiente(Exception):
-    """Se lanza cuando se intenta vender más libros de los que hay en stock."""
+    
     pass
 def registrar_venta(id_usuario, items):
-    """
-    Registra una venta completa.
-    items: lista de dicts con la forma:
-         {"id_libro": int, "cantidad": int, "precio_unitario": float}
-    Inserta en 'ventas' y en 'detalles_venta', descuenta stock en 'libros'. y deja constancia en 'movimientos_stock'.
-    Todo dentro de una misma transacción. si algo falla, no se guarda nada."""
+   
     if not items:
         raise ValueError("La venta necesita al menos un libro.")
     conexion = obtener_conexion()

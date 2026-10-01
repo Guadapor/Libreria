@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import ttk, messagebox
 
 from modelos.libros import obtener_libros
@@ -6,11 +6,11 @@ from modelos.ventas import registrar_venta, obtener_ventas, obtener_detalle_vent
 
 
 def abrir_ventas(usuario):
-    ventana = tk.Toplevel()
+    ventana = ctk.CTkToplevel()
     ventana.title("Librería - Ventas")
     ventana.geometry("560x420")
 
-    tk.Label(ventana, text="Ventas registradas", font=("Arial", 16, "bold")).pack(pady=10)
+    ctk.CTkLabel(ventana, text="Ventas registradas", font=("Arial", 16, "bold")).pack(pady=10)
 
     columnas = ("id", "fecha", "total", "vendedor")
     tabla = ttk.Treeview(ventana, columns=columnas, show="headings", height=14)
@@ -52,18 +52,18 @@ def abrir_ventas(usuario):
     def abrir_formulario_nueva_venta():
         _abrir_formulario_nueva_venta(ventana, usuario, al_guardar=cargar_tabla)
 
-    marco_botones = tk.Frame(ventana)
+    marco_botones = ctk.CTkFrame(ventana)
     marco_botones.pack(pady=(0, 10))
-    tk.Button(marco_botones, text="Nueva venta", width=16, command=abrir_formulario_nueva_venta).pack(side="left", padx=5)
-    tk.Button(marco_botones, text="Actualizar", width=16, command=cargar_tabla).pack(side="left", padx=5)
+    ctk.CTkButton(marco_botones, text="Nueva venta", width=16, command=abrir_formulario_nueva_venta).pack(side="left", padx=5)
+    ctk.CTkButton(marco_botones, text="Actualizar", width=16, command=cargar_tabla).pack(side="left", padx=5)
 
-    tk.Label(ventana, text="Doble clic en una venta para ver el detalle", fg="gray", font=("Arial", 8)).pack()
+    ctk.CTkLabel(ventana, text="Doble clic en una venta para ver el detalle", fg="gray", font=("Arial", 8)).pack()
 
     cargar_tabla()
 
 
 def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
-    ventana = tk.Toplevel(padre)
+    ventana = ctk.CTkToplevel(padre)
     ventana.title("Nueva venta")
     ventana.geometry("480x420")
     ventana.grab_set()
@@ -71,18 +71,18 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
     libros = obtener_libros()
     libros_por_titulo = {f"{l['titulo']} (stock: {l['stock_actual']})": l for l in libros}
 
-    tk.Label(ventana, text="Nueva venta", font=("Arial", 14, "bold")).pack(pady=10)
+    ctk.CTkLabel(ventana, text="Nueva venta", font=("Arial", 14, "bold")).pack(pady=10)
 
-    marco_agregar = tk.Frame(ventana)
+    marco_agregar = ctk.CTkFrame(ventana)
     marco_agregar.pack(pady=5)
 
-    tk.Label(marco_agregar, text="Libro").grid(row=0, column=0, padx=5)
+    ctk.CTkLabel(marco_agregar, text="Libro").grid(row=0, column=0, padx=5)
     combo_libro = ttk.Combobox(marco_agregar, width=30, state="readonly",
                                 values=list(libros_por_titulo.keys()))
     combo_libro.grid(row=0, column=1, padx=5)
 
-    tk.Label(marco_agregar, text="Cantidad").grid(row=1, column=0, padx=5, pady=5)
-    entrada_cantidad = tk.Entry(marco_agregar, width=10)
+    ctk.CTkLabel(marco_agregar, text="Cantidad").grid(row=1, column=0, padx=5, pady=5)
+    entrada_cantidad = ctk.CTkEntry(marco_agregar, width=10)
     entrada_cantidad.insert(0, "1")
     entrada_cantidad.grid(row=1, column=1, sticky="w", padx=5)
 
@@ -99,7 +99,7 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
     tabla_items.pack(padx=10, pady=10, fill="both", expand=True)
 
     items_venta = []  # lista de dicts {id_libro, titulo, cantidad, precio_unitario}
-    etiqueta_total = tk.Label(ventana, text="Total: $0.00", font=("Arial", 12, "bold"))
+    etiqueta_total = ctk.CTkLabel(ventana, text="Total: $0.00", font=("Arial", 12, "bold"))
     etiqueta_total.pack()
 
     def recalcular_total():
@@ -136,7 +136,7 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
         ))
         recalcular_total()
 
-    tk.Button(marco_agregar, text="Agregar a la venta", command=agregar_item).grid(row=0, column=2, rowspan=2, padx=10)
+    ctk.CTkButton(marco_agregar, text="Agregar a la venta", command=agregar_item).grid(row=0, column=2, rowspan=2, padx=10)
 
     def confirmar_venta():
         if not items_venta:
@@ -155,4 +155,4 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
         al_guardar()
         ventana.destroy()
 
-    tk.Button(ventana, text="Confirmar venta", width=20, command=confirmar_venta).pack(pady=10)
+    ctk.CTkButton(ventana, text="Confirmar venta", width=20, command=confirmar_venta).pack(pady=10)

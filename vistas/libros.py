@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import ttk, messagebox
 
 from modelos.libros import (
@@ -14,11 +14,11 @@ from modelos.libros import (
 
 
 def abrir_libros(usuario):
-    ventana = tk.Toplevel()
+    ventana = ctk.CTkToplevel()
     ventana.title("Librería - Libros")
     ventana.geometry("640x460")
 
-    tk.Label(ventana, text="Catálogo de libros", font=("Arial", 16, "bold")).pack(pady=10)
+    ctk.CTkLabel(ventana, text="Catálogo de libros", font=("Arial", 16, "bold")).pack(pady=10)
 
     columnas = ("titulo", "autor", "categoria", "precio", "stock")
     tabla = ttk.Treeview(ventana, columns=columnas, show="headings", height=14)
@@ -70,13 +70,13 @@ def abrir_libros(usuario):
             return
         cargar_tabla()
 
-    marco_botones = tk.Frame(ventana)
+    marco_botones = ctk.CTkFrame(ventana)
     marco_botones.pack(pady=(0, 10))
-    tk.Button(marco_botones, text="Agregar libro", width=16, command=abrir_formulario_nuevo_libro).pack(side="left", padx=5)
+    ctk.CTkButton(marco_botones, text="Agregar libro", width=16, command=abrir_formulario_nuevo_libro).pack(side="left", padx=5)
     if usuario["rol"] == "administrador":
-        tk.Button(marco_botones, text="Eliminar libro", width=16, command=eliminar_seleccionado).pack(side="left", padx=5)
-    tk.Button(marco_botones, text="Actualizar", width=16, command=cargar_tabla).pack(side="left", padx=5)
-    tk.Button(marco_botones, text="Volver al menú", width=16, command=ventana.destroy).pack(side="left", padx=5)
+        ctk.CTkButton(marco_botones, text="Eliminar libro", width=16, command=eliminar_seleccionado).pack(side="left", padx=5)
+    ctk.CTkButton(marco_botones, text="Actualizar", width=16, command=cargar_tabla).pack(side="left", padx=5)
+    ctk.CTkButton(marco_botones, text="Volver al menú", width=16, command=ventana.destroy).pack(side="left", padx=5)
 
     cargar_tabla()
 
@@ -90,7 +90,7 @@ def _buscar_o_crear(nombre, existentes, clave_id, crear):
 
 
 def _abrir_formulario_agregar_libro(padre, al_guardar):
-    ventana = tk.Toplevel(padre)
+    ventana = ctk.CTkToplevel(padre)
     ventana.title("Agregar libro")
     ventana.geometry("380x500")
     ventana.resizable(False, False)
@@ -99,30 +99,30 @@ def _abrir_formulario_agregar_libro(padre, al_guardar):
     autores = obtener_autores()
     categorias = obtener_categorias()
 
-    tk.Label(ventana, text="Nuevo libro", font=("Arial", 14, "bold")).pack(pady=15)
+    ctk.CTkLabel(ventana, text="Nuevo libro", font=("Arial", 14, "bold")).pack(pady=15)
 
-    tk.Label(ventana, text="Título").pack(anchor="w", padx=30)
-    entrada_titulo = tk.Entry(ventana, width=38)
+    ctk.CTkLabel(ventana, text="Título").pack(anchor="w", padx=30)
+    entrada_titulo = ctk.CTkEntry(ventana, width=38)
     entrada_titulo.pack(pady=(0, 10), padx=30)
 
-    tk.Label(ventana, text="Autor").pack(anchor="w", padx=30)
+    ctk.CTkLabel(ventana, text="Autor").pack(anchor="w", padx=30)
     combo_autor = ttk.Combobox(ventana, width=35, values=[a["nombre"] for a in autores])
     combo_autor.pack(padx=30)
-    tk.Label(ventana, text="Elegí uno de la lista o escribí uno nuevo",
+    ctk.CTkLabel(ventana, text="Elegí uno de la lista o escribí uno nuevo",
              fg="gray", font=("Arial", 8)).pack(anchor="w", padx=30, pady=(0, 10))
 
-    tk.Label(ventana, text="Categoría").pack(anchor="w", padx=30)
+    ctk.CTkLabel(ventana, text="Categoría").pack(anchor="w", padx=30)
     combo_categoria = ttk.Combobox(ventana, width=35, values=[c["nombre"] for c in categorias])
     combo_categoria.pack(padx=30)
-    tk.Label(ventana, text="Elegí una de la lista o escribí una nueva",
+    ctk.CTkLabel(ventana, text="Elegí una de la lista o escribí una nueva",
              fg="gray", font=("Arial", 8)).pack(anchor="w", padx=30, pady=(0, 10))
 
-    tk.Label(ventana, text="Precio").pack(anchor="w", padx=30)
-    entrada_precio = tk.Entry(ventana, width=38)
+    ctk.CTkLabel(ventana, text="Precio").pack(anchor="w", padx=30)
+    entrada_precio = ctk.CTkEntry(ventana, width=38)
     entrada_precio.pack(pady=(0, 10), padx=30)
 
-    tk.Label(ventana, text="Stock inicial").pack(anchor="w", padx=30)
-    entrada_stock = tk.Entry(ventana, width=38)
+    ctk.CTkLabel(ventana, text="Stock inicial").pack(anchor="w", padx=30)
+    entrada_stock = ctk.CTkEntry(ventana, width=38)
     entrada_stock.insert(0, "0")
     entrada_stock.pack(pady=(0, 15), padx=30)
 
@@ -160,4 +160,4 @@ def _abrir_formulario_agregar_libro(padre, al_guardar):
         al_guardar()
         ventana.destroy()
 
-    tk.Button(ventana, text="Guardar", width=20, command=guardar).pack(pady=5)
+    ctk.CTkButton(ventana, text="Guardar", width=20, command=guardar).pack(pady=5)
