@@ -1,16 +1,25 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
 
+from vistas.estilos import aplicar_estilo_tabla
 from modelos.libros import obtener_libros
 from modelos.ventas import registrar_venta, obtener_ventas, obtener_detalle_venta, StockInsuficiente
 
 
 def abrir_ventas(usuario):
+    aplicar_estilo_tabla()
     ventana = ctk.CTkToplevel()
     ventana.title("Librería - Ventas")
-    ventana.geometry("560x420")
+    ventana.geometry("620x480")
+    ventana.after(100, ventana.lift)
 
-    ctk.CTkLabel(ventana, text="Ventas registradas", font=("Arial", 16, "bold")).pack(pady=10)
+    ctk.CTkLabel(ventana, text="Ventas registradas", font=("Arial", 18, "bold")).pack(pady=10)
+
+    # Elementos de abajo primero, así la tabla no los empuja fuera de la ventana
+    marco_botones = ctk.CTkFrame(ventana, fg_color="transparent")
+    marco_botones.pack(side="bottom", pady=(0, 12))
+    ctk.CTkLabel(ventana, text="Doble clic en una venta para ver el detalle",
+                 text_color="gray", font=("Arial", 11)).pack(side="bottom")
 
     columnas = ("id", "fecha", "total", "vendedor")
     tabla = ttk.Treeview(ventana, columns=columnas, show="headings", height=14)
@@ -19,9 +28,9 @@ def abrir_ventas(usuario):
     tabla.heading("total", text="Total")
     tabla.heading("vendedor", text="Vendedor")
     tabla.column("id", width=50, anchor="center")
-    tabla.column("fecha", width=150)
-    tabla.column("total", width=90, anchor="e")
-    tabla.column("vendedor", width=150)
+    tabla.column("fecha", width=170)
+    tabla.column("total", width=100, anchor="e")
+    tabla.column("vendedor", width=170)
     tabla.pack(padx=10, pady=10, fill="both", expand=True)
 
     def cargar_tabla():
@@ -52,12 +61,8 @@ def abrir_ventas(usuario):
     def abrir_formulario_nueva_venta():
         _abrir_formulario_nueva_venta(ventana, usuario, al_guardar=cargar_tabla)
 
-    marco_botones = ctk.CTkFrame(ventana)
-    marco_botones.pack(pady=(0, 10))
-    ctk.CTkButton(marco_botones, text="Nueva venta", width=16, command=abrir_formulario_nueva_venta).pack(side="left", padx=5)
-    ctk.CTkButton(marco_botones, text="Actualizar", width=16, command=cargar_tabla).pack(side="left", padx=5)
-
-    ctk.CTkLabel(ventana, text="Doble clic en una venta para ver el detalle", fg="gray", font=("Arial", 8)).pack()
+    ctk.CTkButton(marco_botones, text="Nueva venta", width=130, command=abrir_formulario_nueva_venta).pack(side="left", padx=5)
+    ctk.CTkButton(marco_botones, text="Actualizar", width=130, command=cargar_tabla).pack(side="left", padx=5)
 
     cargar_tabla()
 
@@ -65,26 +70,34 @@ def abrir_ventas(usuario):
 def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
     ventana = ctk.CTkToplevel(padre)
     ventana.title("Nueva venta")
-    ventana.geometry("480x420")
-    ventana.grab_set()
+    ventana.geometry("620x560")
+    ventana.after(100, ventana.lift)
+    ventana.after(150, ventana.grab_set)
 
     libros = obtener_libros()
     libros_por_titulo = {f"{l['titulo']} (stock: {l['stock_actual']})": l for l in libros}
 
-    ctk.CTkLabel(ventana, text="Nueva venta", font=("Arial", 14, "bold")).pack(pady=10)
+    ctk.CTkLabel(ventana, text="Nueva venta", font=("Arial", 18, "bold")).pack(pady=10)
 
     marco_agregar = ctk.CTkFrame(ventana)
-    marco_agregar.pack(pady=5)
+    marco_agregar.pack(pady=5, padx=10)
 
-    ctk.CTkLabel(marco_agregar, text="Libro").grid(row=0, column=0, padx=5)
-    combo_libro = ttk.Combobox(marco_agregar, width=30, state="readonly",
-                                values=list(libros_por_titulo.keys()))
-    combo_libro.grid(row=0, column=1, padx=5)
+    ctk.CTkLabel(marco_agregar, text="Libro").grid(row=0, column=0, padx=8, pady=8)
+    combo_libro = ctk.CTkComboBox(marco_agregar, width=280, state="readonly",
+                                  values=list(libros_por_titulo.keys()))
+    combo_libro.set("")
+    combo_libro.grid(row=0, column=1, padx=8, pady=8)
 
-    ctk.CTkLabel(marco_agregar, text="Cantidad").grid(row=1, column=0, padx=5, pady=5)
-    entrada_cantidad = ctk.CTkEntry(marco_agregar, width=10)
+    ctk.CTkLabel(marco_agregar, text="Cantidad").grid(row=1, column=0, padx=8, pady=8)
+    entrada_cantidad = ctk.CTkEntry(marco_agregar, width=80)
     entrada_cantidad.insert(0, "1")
-    entrada_cantidad.grid(row=1, column=1, sticky="w", padx=5)
+    entrada_cantidad.grid(row=1, column=1, sticky="w", padx=8, pady=8)
+
+    # Abajo: total y botón de confirmar (se empaquetan antes que la tabla)
+    boton_confirmar_marco = ctk.CTkFrame(ventana, fg_color="transparent")
+    boton_confirmar_marco.pack(side="bottom", pady=10)
+    etiqueta_total = ctk.CTkLabel(ventana, text="Total: $0.00", font=("Arial", 14, "bold"))
+    etiqueta_total.pack(side="bottom")
 
     columnas = ("titulo", "cantidad", "precio_unitario", "subtotal")
     tabla_items = ttk.Treeview(ventana, columns=columnas, show="headings", height=8)
@@ -92,19 +105,17 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
     tabla_items.heading("cantidad", text="Cant.")
     tabla_items.heading("precio_unitario", text="Precio u.")
     tabla_items.heading("subtotal", text="Subtotal")
-    tabla_items.column("titulo", width=200)
+    tabla_items.column("titulo", width=240)
     tabla_items.column("cantidad", width=60, anchor="center")
-    tabla_items.column("precio_unitario", width=80, anchor="e")
-    tabla_items.column("subtotal", width=90, anchor="e")
+    tabla_items.column("precio_unitario", width=90, anchor="e")
+    tabla_items.column("subtotal", width=100, anchor="e")
     tabla_items.pack(padx=10, pady=10, fill="both", expand=True)
 
     items_venta = []  # lista de dicts {id_libro, titulo, cantidad, precio_unitario}
-    etiqueta_total = ctk.CTkLabel(ventana, text="Total: $0.00", font=("Arial", 12, "bold"))
-    etiqueta_total.pack()
 
     def recalcular_total():
         total = sum(i["cantidad"] * i["precio_unitario"] for i in items_venta)
-        etiqueta_total.config(text=f"Total: ${total:.2f}")
+        etiqueta_total.configure(text=f"Total: ${total:.2f}")
 
     def agregar_item():
         clave = combo_libro.get()
@@ -120,9 +131,11 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
             return
 
         libro = libros_por_titulo[clave]
-        if cantidad > libro["stock_actual"]:
+        ya_agregado = sum(i["cantidad"] for i in items_venta if i["id_libro"] == libro["id_libro"])
+        if cantidad + ya_agregado > libro["stock_actual"]:
             messagebox.showwarning("Stock insuficiente",
-                                    f"Solo hay {libro['stock_actual']} unidades de '{libro['titulo']}'.")
+                                   f"Solo hay {libro['stock_actual']} unidades de '{libro['titulo']}' "
+                                   f"(ya agregaste {ya_agregado}).")
             return
 
         items_venta.append({
@@ -136,7 +149,8 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
         ))
         recalcular_total()
 
-    ctk.CTkButton(marco_agregar, text="Agregar a la venta", command=agregar_item).grid(row=0, column=2, rowspan=2, padx=10)
+    ctk.CTkButton(marco_agregar, text="Agregar a la venta", command=agregar_item).grid(
+        row=0, column=2, rowspan=2, padx=10)
 
     def confirmar_venta():
         if not items_venta:
@@ -155,4 +169,5 @@ def _abrir_formulario_nueva_venta(padre, usuario, al_guardar):
         al_guardar()
         ventana.destroy()
 
-    ctk.CTkButton(ventana, text="Confirmar venta", width=20, command=confirmar_venta).pack(pady=10)
+    ctk.CTkButton(boton_confirmar_marco, text="Confirmar venta", width=180, height=36,
+                  command=confirmar_venta).pack()
