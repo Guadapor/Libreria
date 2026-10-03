@@ -11,7 +11,7 @@ def obtener_conexion():
 
 
 def _agregar_columna_si_falta(cursor, tabla, columna, definicion):
-    """Migración simple: agrega la columna solo si la tabla todavía no la tiene."""
+   
     cursor.execute(f"PRAGMA table_info({tabla})")
     columnas = [fila[1] for fila in cursor.fetchall()]
     if columna not in columnas:
