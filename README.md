@@ -27,12 +27,21 @@ Panel Principal (Menú)
 --------------------------------
 Desde el menú principal, los administradores y usuarios autorizados podrán acceder a las siguientes secciones:
 
-* Libros: Permite dar de alta nuevos ejemplares indicando el nombre del autor, la categoría, el precio y la cantidad inicial disponible.
+* Libros: Permite dar de alta nuevos ejemplares indicando el nombre del autor, la categoría, el precio y la cantidad inicial disponible. 
 * Ventas: Historial completo con el registro de todas las ventas realizadas en el sistema.
 * Movimientos: Apartado para supervisar de forma clara los ingresos y egresos de dinero.
 * Stock: Control de inventario en tiempo real. Permite visualizar la cantidad disponible de cada libro, identificar alertas de reposición o detectar productos agotados.
 * Ganancias: Reporte financiero detallado con el total de las ganancias obtenidas.
-* Usuarios: Gestión y visualización de todos los usuarios que poseen acceso a la plataforma
+* Usuarios: Gestión y visualización de todos los usuarios que poseen acceso a la plataforma. 
+
+Cosas a tener en cuenta:
+-----------------------------
+
+* El administrador tiene permiso de ver todo lo que esta dentro del sistema. 
+* Los Vendedores solo tienen permitido las siguientes secciones:
+- Ventas
+- Stock
+- Libros
 
 # Quien mantiene y contribuye con el proyecto
 Este proyecto esta desarrollado y mantenido por el grupo "Commit y Pide un Deseo" de la Tecnicatura Superior en Desarrollo de Software (ISPC)

@@ -3,14 +3,24 @@ from pathlib import Path
 
 RUTA_DB = Path(__file__).resolve().parent / "libreria.db"
 
+
 def obtener_conexion():
     conexion = sqlite3.connect(RUTA_DB)
     conexion.execute("PRAGMA foreign_keys = ON")
     return conexion
 
+
+def _agregar_columna_si_falta(cursor, tabla, columna, definicion):
+    """Migración simple: agrega la columna solo si la tabla todavía no la tiene."""
+    cursor.execute(f"PRAGMA table_info({tabla})")
+    columnas = [fila[1] for fila in cursor.fetchall()]
+    if columna not in columnas:
+        cursor.execute(f"ALTER TABLE {tabla} ADD COLUMN {columna} {definicion}")
+
+
 def iniciar_base_datos():
     conexion = obtener_conexion()
-    cursor = conexion.cursor() 
+    cursor = conexion.cursor()
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS categorias (
@@ -34,6 +44,7 @@ def iniciar_base_datos():
             id_autor INTEGER NOT NULL,
             id_categoria INTEGER NOT NULL,
             precio REAL NOT NULL CHECK (precio >= 0),
+            costo REAL CHECK (costo >= 0),
             stock_actual INTEGER NOT NULL DEFAULT 0 CHECK (stock_actual >= 0),
             FOREIGN KEY (id_autor) REFERENCES autores(id_autor),
             FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria)
@@ -57,8 +68,8 @@ def iniciar_base_datos():
             id_venta INTEGER PRIMARY KEY AUTOINCREMENT,
             fecha TEXT NOT NULL,
             total REAL NOT NULL CHECK (total >= 0),
-            id_usuario INTEGER NOT NULL,  
-            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)           
+            id_usuario INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
         )
     """)
 
@@ -69,6 +80,7 @@ def iniciar_base_datos():
             id_libro INTEGER NOT NULL,
             cantidad INTEGER NOT NULL CHECK (cantidad > 0),
             precio_unitario REAL NOT NULL CHECK (precio_unitario >= 0),
+            costo_unitario REAL CHECK (costo_unitario >= 0),
             FOREIGN KEY (id_venta) REFERENCES ventas (id_venta),
             FOREIGN KEY (id_libro) REFERENCES libros(id_libro)
         )
@@ -77,19 +89,23 @@ def iniciar_base_datos():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS movimientos_stock (
             id_movimiento INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_libro INTEGER NOT NULL, 
+            id_libro INTEGER NOT NULL,
             tipo_movimiento TEXT NOT NULL CHECK (tipo_movimiento IN ('entrada', 'salida')),
             cantidad INTEGER NOT NULL CHECK (cantidad > 0),
             fecha TEXT NOT NULL,
-            detalle TEXT,  
-            FOREIGN KEY (id_libro) REFERENCES libros(id_libro)           
+            detalle TEXT,
+            FOREIGN KEY (id_libro) REFERENCES libros(id_libro)
         )
     """)
 
+    # Migración: si la base ya existía sin costos, se agregan las columnas sin tocar los datos.
+    _agregar_columna_si_falta(cursor, "libros", "costo", "REAL CHECK (costo >= 0)")
+    _agregar_columna_si_falta(cursor, "detalle_ventas", "costo_unitario", "REAL CHECK (costo_unitario >= 0)")
+
     conexion.commit()
     conexion.close()
-    print("Base de datos creada correctamente.")
+    print("Base de datos lista.")
 
-    if __name__ == "__main__": 
-        iniciar_base_datos()
 
+if __name__ == "__main__":
+    iniciar_base_datos()
