@@ -6,6 +6,7 @@ from vistas.ventas import abrir_ventas
 from vistas.stock import abrir_stock
 from vistas.movimientos import abrir_movimientos
 from vistas.ganancias import abrir_ganancias
+from vistas.usuarios import abrir_usuarios
 
 opciones = [
     ("Libros", ["administrador", "vendedor"]),
@@ -22,6 +23,7 @@ pantallas = {
     "Stock": abrir_stock,
     "Movimientos": abrir_movimientos,
     "Ganancias": abrir_ganancias,
+    "Usuarios": abrir_usuarios,
 }
 
 
