@@ -23,6 +23,7 @@ def obtener_libros():
             "categoria": fila[3],
             "precio": fila[4],
             "stock_actual": fila[5],
+            "costo": fila[6],
         }
         for fila in filas
     ]
@@ -34,6 +35,7 @@ def obtener_autores():
     filas = cursor.fetchall()
     conexion.close()
     return [{"id_autor": fila[0], "nombre": fila[1]} for fila in filas]
+
 def obtener_categorias():
     
     conexion = obtener_conexion()
@@ -42,6 +44,7 @@ def obtener_categorias():
     filas = cursor.fetchall()
     conexion.close()
     return [{"id_categoria": fila[0], "nombre": fila[1]} for fila in filas]
+
 def agregar_autor(nombre):
     
     conexion = obtener_conexion()
@@ -51,6 +54,7 @@ def agregar_autor(nombre):
     id_autor = cursor.lastrowid
     conexion.close()
     return id_autor
+
 def agregar_categoria(nombre, descripcion=None):
     
     conexion = obtener_conexion()
@@ -64,15 +68,15 @@ def agregar_categoria(nombre, descripcion=None):
     conexion.close()
     return id_categoria
 
-def agregar_libro(titulo, id_autor, id_categoria, precio, stock_inicial=0):
+def agregar_libro(titulo, id_autor, id_categoria, precio, stock_inicial=0, costo=None):
    
     conexion = obtener_conexion()
     cursor = conexion.cursor()
     try:
         cursor.execute(
-            """INSERT INTO libros (titulo, id_autor, id_categoria, precio, stock_actual)
-               VALUES (?, ?, ?, ?, ?)""",
-            (titulo, id_autor, id_categoria, precio, stock_inicial),
+            """INSERT INTO libros (titulo, id_autor, id_categoria, precio, stock_actual, costo)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (titulo, id_autor, id_categoria, precio, stock_inicial, costo),
         )
         id_libro = cursor.lastrowid
         if stock_inicial > 0:
@@ -91,6 +95,36 @@ def agregar_libro(titulo, id_autor, id_categoria, precio, stock_inicial=0):
     finally:
         conexion.close()
 
+def actualizar_costo(id_libro, costo, aplicar_a_ventas_previas=False):
+    """Cambia el costo de un libro. Si se pide, completa el costo en las ventas
+    anteriores de ese libro que lo tengan vacío (no pisa costos ya guardados).
+    Devuelve cuántas líneas de ventas anteriores se completaron."""
+    
+    if costo is None or costo <0:
+        raise ValueError("El costo debe ser un número mayor o igual a cero.")
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    try:
+        cursor.execute("UPDATE libros SET costo = ? WHERE id_libro = ?", (costo, id_libro))
+        lineas_actualizadas = 0
+        if cursor.rowcount == 0:
+            raise ValueError(f"El libro con id {id_libro} no existe.")
+        completadas = 0
+        if aplicar_a_ventas_previas:
+            cursor.execute(
+                """UPDATE detalle_ventas SET costo_unitario = ?"
+                "WHERE id_libro = ? AND costo_unitario IS NULL""",
+                (costo, id_libro),
+            )
+            completadas = cursor.rowcount
+        conexion.commit()
+        return completadas
+    except Exception:
+        conexion.rollback()
+        raise
+    finally:
+        conexion.close()
+           
 class LibroConVentas(Exception):
     pass
 
