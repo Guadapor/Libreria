@@ -1,5 +1,3 @@
-import customtkinter as ctk
-from tkinter import ttk, messagebox
 from database.db import obtener_conexion
 from datetime import datetime
 
@@ -7,7 +5,7 @@ def obtener_libros():
     conexion = obtener_conexion()
     cursor = conexion.cursor()
     cursor.execute("""
-        SELECT l.id_libro, l.titulo, a.nombre, c.nombre, l.precio, l.stock_actual
+        SELECT l.id_libro, l.titulo, a.nombre, c.nombre, l.precio, l.stock_actual, l.costo
         FROM libros l
         JOIN autores a ON l.id_autor = a.id_autor
         JOIN categorias c ON l.id_categoria = c.id_categoria
@@ -106,7 +104,6 @@ def actualizar_costo(id_libro, costo, aplicar_a_ventas_previas=False):
     cursor = conexion.cursor()
     try:
         cursor.execute("UPDATE libros SET costo = ? WHERE id_libro = ?", (costo, id_libro))
-        lineas_actualizadas = 0
         if cursor.rowcount == 0:
             raise ValueError(f"El libro con id {id_libro} no existe.")
         completadas = 0
@@ -130,7 +127,6 @@ class LibroConVentas(Exception):
 
 
 def eliminar_libro(id_libro):
-
     conexion = obtener_conexion()
     cursor = conexion.cursor()
     try:
