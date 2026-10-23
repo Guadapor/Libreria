@@ -13,7 +13,7 @@ def registrar_venta(id_usuario, items):
     cursor = conexion.cursor()
     try:
         # Verificar stock disponible antes de tocar nada
-        costo = {}
+        costos = {}
         for item in items:
             cursor.execute(
                 "SELECT titulo, stock_actual, costo FROM libros WHERE id_libro = ?", 
@@ -22,8 +22,8 @@ def registrar_venta(id_usuario, items):
             fila = cursor.fetchone()
             if fila is None:
                 raise ValueError(f"El libro con id {item['id_libro']} no existe.")
-            titulo, stock_actual, costo = fila
-            costo[item["id_libro"]] = costo
+            titulo, stock_actual, costo_libro = fila
+            costos[item["id_libro"]] = costo_libro
             if item["cantidad"] > stock_actual:
                 raise StockInsuficiente(
                     f"Stock insuficiente para '{titulo}': quedan {stock_actual}, "
@@ -41,7 +41,7 @@ def registrar_venta(id_usuario, items):
             cursor.execute(
                 """INSERT INTO detalle_ventas (id_venta, id_libro, cantidad, precio_unitario, costo_unitario)
                    VALUES (?, ?, ?, ?, ?)""",
-                (id_venta, item["id_libro"], item["cantidad"], item["precio_unitario"], costo[item["id_libro"]]),
+                (id_venta, item["id_libro"], item["cantidad"], item["precio_unitario"], costos[item["id_libro"]]),
             )
             cursor.execute(
                 "UPDATE libros SET stock_actual = stock_actual - ? WHERE id_libro = ?",
