@@ -98,7 +98,7 @@ def actualizar_costo(id_libro, costo, aplicar_a_ventas_previas=False):
     anteriores de ese libro que lo tengan vacío (no pisa costos ya guardados).
     Devuelve cuántas líneas de ventas anteriores se completaron."""
     
-    if costo is None or costo <0:
+    if costo is None or costo < 0:
         raise ValueError("El costo debe ser un número mayor o igual a cero.")
     conexion = obtener_conexion()
     cursor = conexion.cursor()
@@ -106,14 +106,17 @@ def actualizar_costo(id_libro, costo, aplicar_a_ventas_previas=False):
         cursor.execute("UPDATE libros SET costo = ? WHERE id_libro = ?", (costo, id_libro))
         if cursor.rowcount == 0:
             raise ValueError(f"El libro con id {id_libro} no existe.")
+        
         completadas = 0
         if aplicar_a_ventas_previas:
             cursor.execute(
-                """UPDATE detalle_ventas SET costo_unitario = ?"
-                "WHERE id_libro = ? AND costo_unitario IS NULL""",
+                """UPDATE detalle_ventas 
+                   SET costo_unitario = ? 
+                   WHERE id_libro = ? AND costo_unitario IS NULL""",
                 (costo, id_libro),
             )
             completadas = cursor.rowcount
+            
         conexion.commit()
         return completadas
     except Exception:

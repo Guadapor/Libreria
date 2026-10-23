@@ -13,7 +13,7 @@ def registrar_venta(id_usuario, items):
     cursor = conexion.cursor()
     try:
         # Verificar stock disponible antes de tocar nada
-        costo = {}
+        costos_dict = {}  # Cambiamos el nombre del diccionario para evitar conflictos
         for item in items:
             cursor.execute(
                 "SELECT titulo, stock_actual, costo FROM libros WHERE id_libro = ?", 
@@ -22,12 +22,15 @@ def registrar_venta(id_usuario, items):
             fila = cursor.fetchone()
             if fila is None:
                 raise ValueError(f"El libro con id {item['id_libro']} no existe.")
-            titulo, stock_actual, costo = fila
-            costo[item["id_libro"]] = costo
+            
+            titulo, stock_actual, costo_libro = fila  # Usamos una variable distinta para el valor recuperado
+            costos_dict[item["id_libro"]] = costo_libro  # Guardamos correctamente en el diccionario
+            
             if item["cantidad"] > stock_actual:
                 raise StockInsuficiente(
                     f"Stock insuficiente para '{titulo}': quedan {stock_actual}, "
                     f"se pidieron {item['cantidad']}.")
+                
         total = sum(item["cantidad"] * item["precio_unitario"] for item in items)
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -37,11 +40,10 @@ def registrar_venta(id_usuario, items):
         )
         id_venta = cursor.lastrowid
         for item in items:
-            # El costo queda guardado en la venta: despues cambia, la venta no se altera.
             cursor.execute(
                 """INSERT INTO detalle_ventas (id_venta, id_libro, cantidad, precio_unitario, costo_unitario)
                    VALUES (?, ?, ?, ?, ?)""",
-                (id_venta, item["id_libro"], item["cantidad"], item["precio_unitario"], costo[item["id_libro"]]),
+                (id_venta, item["id_libro"], item["cantidad"], item["precio_unitario"], costos_dict[item["id_libro"]]),
             )
             cursor.execute(
                 "UPDATE libros SET stock_actual = stock_actual - ? WHERE id_libro = ?",

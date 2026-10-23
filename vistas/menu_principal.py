@@ -16,7 +16,7 @@ opciones = [
     ("Ganancias", ["administrador"]),
     ("Usuarios", ["administrador"]),
 ]
-# Pantallas ya implementadas. Las que todavía no están hechas muestran un aviso.
+
 pantallas = {
     "Libros": abrir_libros,
     "Ventas": abrir_ventas,
@@ -28,9 +28,12 @@ pantallas = {
 
 
 def abrir_menu(usuario):
+    resultado = {"cerrar_sesion": False}
+
     ventana = ctk.CTk()
     ventana.title("Librería - Menú principal")
-    ventana.geometry("420x420")
+    ventana.geometry("420x460")
+    ventana.resizable(False, False)
 
     ctk.CTkLabel(ventana, text="Menú Principal", font=("Arial", 22, "bold")).pack(pady=(25, 5))
     ctk.CTkLabel(ventana, text=f"{usuario['nombre']} ({usuario['rol']})",
@@ -55,8 +58,30 @@ def abrir_menu(usuario):
             command=lambda n=nombre: abrir_pantalla(n),
         ).grid(row=i // 2, column=i % 2, padx=8, pady=8)
 
-    ctk.CTkButton(ventana, text="Salir", width=120, height=36,
-                  fg_color="#8B2E2E", hover_color="#6E2323",
-                  command=ventana.destroy).pack(pady=25)
+    def cerrar_sesion():
+        if messagebox.askyesno("Cerrar sesión", "¿Estás seguro de que querés cerrar sesión?"):
+            resultado["cerrar_sesion"] = True
+            ventana.destroy()
+
+    # Botones inferiores: Cerrar sesión y Salir del sistema
+    marco_botones = ctk.CTkFrame(ventana, fg_color="transparent")
+    marco_botones.pack(pady=20)
+
+    ctk.CTkButton(
+        marco_botones, text="Cerrar sesión", width=130, height=36,
+        fg_color="#3A608F", hover_color="#2A4870",
+        command=cerrar_sesion,
+    ).pack(side="left", padx=5) # type: ignore
+
+    ctk.CTkButton(
+        marco_botones, text="Salir", width=120, height=36,
+        fg_color="#8B2E2E", hover_color="#6E2323",
+        command=ventana.destroy,
+    ).pack(side="left", padx=5)
 
     ventana.mainloop()
+    return resultado["cerrar_sesion"]
+    
+
+
+   

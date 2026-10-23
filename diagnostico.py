@@ -31,8 +31,6 @@ def pista_de(error):
         return "Hay un error de sintaxis en una consulta SQL de ese archivo del modelo."
     return "Mandame este error completo."
 
-
-# ---------------------------------------------------------------- 1. archivos
 titulo("1. Versiones de los archivos")
 marcas = [
     ("database/db.py", "_agregar_columna_si_falta", "versión con costo (actualiza la base sola)"),
@@ -66,7 +64,6 @@ for ruta, marca, descripcion in marcas:
 if (RAIZ / "vistas" / "estilo.py").exists():
     print("AVISO  existe vistas/estilo.py (sin 's'); sobra, podés borrarlo")
 
-# ---------------------------------------------------------------- 2. base de datos
 titulo("2. Base de datos")
 try:
     from database import db
@@ -110,7 +107,7 @@ except Exception:
     traceback.print_exc(file=sys.stdout)
     problemas.append("No se pudo abrir la base de datos")
 
-# ---------------------------------------------------------------- 3. funciones que usan las pantallas
+
 titulo("3. Lo que leen las pantallas")
 pruebas = [
     ("modelos.libros", "obtener_libros", "lista de libros (Libros, Ventas y Stock)"),
@@ -134,7 +131,7 @@ for modulo, funcion, descripcion in pruebas:
         print("   PISTA:", pista_de(error))
         problemas.append(f"{funcion}() falla: {error}")
 
-# ---------------------------------------------------------------- resumen
+
 titulo("RESUMEN")
 if problemas:
     print("Encontré", len(problemas), "problema(s):")
