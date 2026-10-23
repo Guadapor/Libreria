@@ -13,7 +13,7 @@ def registrar_venta(id_usuario, items):
     cursor = conexion.cursor()
     try:
         # Verificar stock disponible antes de tocar nada
-        costos_dict = {}  # Cambiamos el nombre del diccionario para evitar conflictos
+        costos_dict = {}
         for item in items:
             cursor.execute(
                 "SELECT titulo, stock_actual, costo FROM libros WHERE id_libro = ?", 
@@ -23,8 +23,8 @@ def registrar_venta(id_usuario, items):
             if fila is None:
                 raise ValueError(f"El libro con id {item['id_libro']} no existe.")
             
-            titulo, stock_actual, costo_libro = fila  # Usamos una variable distinta para el valor recuperado
-            costos_dict[item["id_libro"]] = costo_libro  # Guardamos correctamente en el diccionario
+            titulo, stock_actual, costo_libro = fila
+            costos_dict[item["id_libro"]] = costo_libro
             
             if item["cantidad"] > stock_actual:
                 raise StockInsuficiente(
@@ -40,6 +40,7 @@ def registrar_venta(id_usuario, items):
         )
         id_venta = cursor.lastrowid
         for item in items:
+            # El costo queda guardado en la venta: después cambia, la venta no se altera.
             cursor.execute(
                 """INSERT INTO detalle_ventas (id_venta, id_libro, cantidad, precio_unitario, costo_unitario)
                    VALUES (?, ?, ?, ?, ?)""",
